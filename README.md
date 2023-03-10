@@ -1,8 +1,10 @@
 ## Get started
 
-Donwnload node js https://nodejs.org/en/download/ if not have
-Donwload Mongo Db (https://www.mongodb.com/try/download/community) or Use Mongo Db atlas
-Donwload Git if want to clone the repo
+Download node js https://nodejs.org/en/download/ if not have
+
+Download Mongo Db (https://www.mongodb.com/try/download/community) or Use Mongo Db atlas
+
+Download Git if want to clone the repo
 
 ```bash
 # Clone this repository
