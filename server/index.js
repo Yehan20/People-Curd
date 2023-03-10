@@ -3,6 +3,8 @@ import mongoose from "mongoose";
 import cors from 'cors'
 import  dotenv from 'dotenv'
 import personRoutes from './routes/person.routes.js'
+
+//  ENV 
 const KEY =function(){
     if( process.env.CONNECTION_URL===undefined){
         console.log('wrong')
@@ -14,9 +16,10 @@ const KEY =function(){
 
 const app = express();
 const port = 5000
-//const url = 'mongodb+srv://yehan:yehan1234@carcitycluster.dodfqtz.mongodb.net/CarCity?retryWrites=true&w=majority'
 
 
+
+// Middle Wheare
 app.use(express.urlencoded({extended:true}));
 app.use(cors())
 app.use(express.json())

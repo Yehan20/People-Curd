@@ -6,10 +6,12 @@ import Form from 'react-bootstrap/Form';
 import Modal from 'react-bootstrap/Modal'
 import DeleteModal from './deleteModal';
 import UpdateModal from './updateModal';
+import {BiSort} from 'react-icons/bi'
 
 type ModalType={
   show:boolean,
   setShow: React.Dispatch<React.SetStateAction<boolean>>,
+  category:string
   handleClose:()=>void
   handleShow: ()=>void
   
@@ -25,32 +27,40 @@ type PersonData={
   type:string;
 }
  
-  const UserTable:React.FC<ModalType> = ({show,setShow,handleClose,handleShow}) => {
+  const UserTable:React.FC<ModalType> = ({show,setShow,handleClose,handleShow,category}) => {
      
     const [empId,setempId] = useState<string>('');
     const [deleteId,setDeleteId] =useState<string>('');
     const [updateId,setUpdateId] =useState<string>('');
    
     const [people,setPeople] = useState<PersonData[]>([]);
-    const [person,setPerson]= useState<PersonData>({name:'',emp__id:empId,exp:0,_id:'',designation:'',_v:0,type:''});
+    const [person,setPerson]= useState<PersonData>({name:'',emp__id:empId,exp:1,_id:'',designation:'',_v:0,type:'Full Time'});
 
    
-    const [change,setChange] = useState<boolean>(false)
+    const [change,setChange] = useState<number>(0)
     const [deleteModalShow,setDeleteModalShow]=useState<boolean>(false)
     const [updateModalShow,setUpdateShow]=useState<boolean>(false)
+    const [isSort,SetisSortName]=useState<boolean>(true);
+    const [isSortID,SetisSortID]=useState<boolean>(true);
 
     const getPeople = useCallback(async()=>{
       try{
-        const {data} = await Axios.get('http://localhost:5000/person/all');
-        generateId(data)
-        setPeople(data)
-      
+       
+          const {data} = await Axios.get('http://localhost:5000/person/all');
+          generateId(data)
+          setPeople(data)
+          if(category!=='All'){
+            const newCategory = data.filter((person:PersonData)=>person.type===category);
+            setPeople(newCategory)
+          }
+    
       }
       catch(e){
         console.log(e);
       }
  
-    },[])
+    },[category])
+    
 
     const handleInput = (e:any)=>{
 
@@ -73,13 +83,58 @@ type PersonData={
  
 
     const addPerson  = async ()=>{
+      if(person.name==='' || person.designation==='' ) {
+         alert('Fill Feilds')
+         return 
+      }
       try{
         const {data} = await Axios.post('http://localhost:5000/person/add',person)
-        console.log(data)
-        setChange(data.success)
+        if(data.success){
+          setChange(Math.floor(Math.random()*10))
+        }
+       
         handleClose()
         alert('Added')
       }catch(e){
+        console.log(e);
+      }
+    }
+
+    const sortName = async()=>{
+      console.log('hi')
+      SetisSortName(!isSort)
+      try{
+        if(isSort){
+          const {data} = await Axios.get('http://localhost:5000/person/sortName');
+          console.log(data);
+          setPeople(data)
+        }
+        else{
+          getPeople()
+        }
+
+      
+      }
+      catch(e){
+        console.log(e);
+      }
+    }
+    const sortID = async()=>{
+ 
+      SetisSortID(!isSortID)
+      try{
+        if(isSortID){
+          const {data} = await Axios.get('http://localhost:5000/person/sortID');
+          console.log(data);
+          setPeople(data)
+        }
+        else{
+          getPeople()
+        }
+
+      
+      }
+      catch(e){
         console.log(e);
       }
     }
@@ -94,8 +149,8 @@ type PersonData={
       <table className='table table-bordered '>
         <thead className='bg-dark text-white'>
           <tr>
-            <th>Display Name</th>
-            <th>Emp ID</th>
+            <th>Display Name <BiSort style={{cursor:'pointer'}} color={'white'} onClick={sortName}/></th>
+            <th>Emp ID <BiSort style={{cursor:'pointer'}}  color={'white'} onClick={sortID}/> </th>
             <th>Designation</th>
             <th>Emp Type</th>
             <th>Experience</th>
@@ -120,6 +175,7 @@ type PersonData={
         }
         </tbody>
       </table>
+
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Add People</Modal.Title>
@@ -130,6 +186,7 @@ type PersonData={
           <Form.Group className="mb-3 w-100" controlId="exampleForm.ControlInput1">
               <Form.Label>Display Name</Form.Label>
               <Form.Control
+                required
                 name='name'
                 type="text"
                 placeholder="Jon Doe"
@@ -141,6 +198,7 @@ type PersonData={
             <Form.Group className="mb-3 w-100" controlId="exampleForm.ControlInput1">
               <Form.Label>Emp Id</Form.Label>
               <Form.Control 
+                required
                 type="text"
                 value={empId}
                 name='emp__id'
@@ -155,13 +213,13 @@ type PersonData={
           <div className='d-flex gap-2'>
 
             <Form.Group className="mb-3 w-100" controlId="exampleForm.ControlInput1">
-              <Form.Label>Designation</Form.Label>
+              <Form.Label>Emp Type</Form.Label>
               <Form.Select name='type'  onChange={(e)=>handleInput(e)} className='w-100' aria-label="Default select example">
-                  <option value="all" >Employee Types</option>
-                  <option value="fullTime" >Full Time</option>
-                  <option value="partTime" >Part Time</option>
-                  <option value="contractBasis" >Contract Basis</option>
-                  <option value="other" >Other</option>
+            
+                  <option value="Full Time">Full Time</option>
+                  <option value="Part Time">Part Time</option>
+                  <option value="Contract Basis">Contract Basis</option>
+                  <option value="Other">Other</option>
               </Form.Select>
             </Form.Group>
 
@@ -171,6 +229,9 @@ type PersonData={
                   <option value="1">1 years</option>
                   <option value="2">2 years</option>
                   <option value="3">3 years</option>
+                  <option value="4">4 years</option>
+                  <option value="5">5 years</option>
+                  <option value="6">6 years</option>
               </Form.Select>
             </Form.Group>
 
@@ -184,6 +245,7 @@ type PersonData={
                 placeholder="Designation"
                 autoFocus
                 onChange={(e)=>handleInput(e)}
+                required
               />
             </Form.Group>
 
@@ -193,7 +255,7 @@ type PersonData={
               controlId="exampleForm.ControlTextarea1"
             >
               <Form.Label>Personal Notes</Form.Label>
-              <Form.Control as="textarea" rows={3} />
+              <Form.Control required as="textarea" rows={3} />
             </Form.Group>
           </Form>
         </Modal.Body>
@@ -206,6 +268,7 @@ type PersonData={
           </Button>
         </Modal.Footer>
       </Modal>
+
       <DeleteModal deleteModalShow={deleteModalShow} setDeleteId={setDeleteId} deleteId={deleteId} setDeleteModalShow={setDeleteModalShow} />
       
       <UpdateModal 
@@ -213,8 +276,6 @@ type PersonData={
         setUpdateId={setUpdateId} 
         updateId={updateId} 
         setUpdateShow={setUpdateShow}
-   
-      
       />
     </>
   )

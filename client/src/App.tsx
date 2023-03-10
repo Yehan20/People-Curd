@@ -6,28 +6,33 @@ import './css/style.css';
 
 const App: React.FC = () => {
   const [show, setShow] = useState<boolean>(false);
+
+  const [category,setCategory]=useState("All")
+
   const handleClose= () =>setShow(false);
   const handleShow = () => setShow(true);
+  
 
+   
   
 
   return (
     <div className="App">
       <h1>People</h1>
       <hr />
-      <div className='employe-options d-flex'>
+      <div className='employe-options gap-3 d-flex justify-content-end'>
 
-        <Form.Select className='select w-25' id="Select">
-          <option value="all" >Employee Types</option>
-          <option value="fullTime" >Full Time</option>
-          <option value="partTime" >Part Time</option>
-          <option value="contractBasis" >Contract Basis</option>
-          <option value="other" >Other</option>
+        <Form.Select onChange={(e)=>setCategory(e.target.value)} className='select w-25' id="Select">
+          <option value="All" >Employee Types</option>
+          <option value="Full Time" >Full Time</option>
+          <option value="Part Time" >Part Time</option>
+          <option value="Contract Basis" >Contract Basis</option>
+          <option value="Other" >Other</option>
         </Form.Select>
 
         <button className='btn btn-primary btn-add ' onClick={handleShow} >Add People</button>
       </div>
-      <UserTable show={show} setShow={setShow} handleClose={handleClose} handleShow={handleShow}/>
+      <UserTable category={category} show={show} setShow={setShow} handleClose={handleClose} handleShow={handleShow}/>
     </div>
   );
 }

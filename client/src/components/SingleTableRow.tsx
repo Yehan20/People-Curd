@@ -33,7 +33,7 @@ const SingleTableRow:React.FC<PersonData> = ({_id,name,emp__id,exp,type,designat
           <td>{emp__id}</td>
           <td>{designation}</td>
           <td>{type}</td>
-          <td>{exp}</td>
+          <td>{exp} years</td>
           <td className='d-flex'>
             <button className='text-primary btn btn-link' onClick={handleUpdate}>Edit</button>
             <button className='text-danger btn btn-link' onClick={handleDelete}>Delete</button>

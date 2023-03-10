@@ -2,29 +2,34 @@ import personModal from "../model/Person.js";
 
 
 const addPerson = async (req, res) => {
-
+    console.log(req.body);
     try {
-
-        const user = new personModal({
+        const user = await personModal.create({
             name: req.body.name,
             emp__id: req.body.emp__id,
             exp: Number(req.body.exp),
             designation: req.body.designation,
             type: req.body.type
         })
+        console.log(user);
 
-        await user.save()
         res.status(200).json({success: true})
     } 
     catch (e) {
+        console.log(e);
         res.status(404).json({success: false})
     }
 
 }
 
 const getPersons = async (req, res) => {
-    const persons = await personModal.find()
-    res.send(persons)
+    try{
+        const persons = await personModal.find()
+        res.send(persons)
+    }catch(e){
+        console.log(e);
+    }
+
 }
 
 const deletePerson = async (req, res) => {
@@ -48,11 +53,32 @@ const updatePerson = async (req, res) => {
     }
 }
 
+const sortByName = async (req,res)=>{
+    try{
+        const persons = await personModal.find().collation({'locale': "en"}).sort("feild name")
+        res.send(persons)
+    }catch(e){
+        console.log(e);
+    }
+}
+
+
+const sortByID = async (req,res)=>{
+    try{
+        const persons = await personModal.find().collation({'locale': "en"}).sort("feild -emp__id")
+        res.send(persons)
+    }catch(e){
+        console.log(e);
+    }
+}
+
 const personController = {
     addPerson,
     getPersons,
     deletePerson,
-    updatePerson
+    updatePerson,
+    sortByName,
+    sortByID
 }
 
 export default personController;

@@ -6,7 +6,7 @@ const PersonSchema = new mongoose.Schema({
         type:String,
         required:true,
         validate:{
-            validator:(v)=>v.length>4,
+            validator:(v)=>v.length>1,
            
         },
         message:props=> `name must be more than ${props.value} `
